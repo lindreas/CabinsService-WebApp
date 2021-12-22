@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CabinServices</title>
+</head>
+<style>
+   
+    body {
+        background-color: aliceblue;
+        display:flex;
+    }
+    #container {
+        left: 50%;
+        top: 50%;
+        margin: auto;
+        margin-top: 5%;
+        width: 380px;
+        height: 380px;
+        background: white;
+        border-radius: 0% 0% 0% 0% / 0% 0% 0% 0% ;
+        color: white;
+        box-shadow: 10px 10px rgba(0,0,0,.15);
+    }
+    h3 {
+        color: black;
+        text-align: center;
+    }
+    button, input {
+        display:flex;
+        margin:auto;
+    }
+</style>
+<body>
+    <div id="container">
+        <div id="header">
+            <h3>Logga in</h3>
+            <form action={% url 'login' %} method="POST">
+                <!--Cross Site Request Forgery protection-->
+                {% csrf_token %}
+                <label for="username"><b></b></label>
+                <input type="text" placeholder="E-post" name="email" required><br>
+                <label for="password"><b></b></label>
+                <input type="password" placeholder="Lösenord" name="password" required><br>
+                <button type="submit">Logga in</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
