@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>CabinServices</title>
+</head>
+<style>
+    body {
+        background-color: aliceblue;
+        display:flex;
+    }
+    #container {
+        left: 50%;
+        top: 50%;
+        margin-top: 5%;
+        width: 380px;
+        height: 380px;
+        background: white;
+        border-radius: 0% 0% 0% 0% / 0% 0% 0% 0% ;
+        color: white;
+        box-shadow: 10px 10px rgba(0,0,0,.15);
+        padding-bottom: 10px;
+    }
+    .cont1{
+        margin-left: auto;
+        margin-right: 5%;
+    }
+
+    .cont2{
+        margin-left: 5%;
+        margin-right: auto;
+        overflow-y: auto;
+    }
+    h3, h4, table {
+        color: black;
+        text-align: center;
+    }
+
+    p {
+        border: 1px solid #00000021;
+        padding: 10px;
+        margin: 3%;
+        box-shadow: 3px 3px rgb(0 0 0 / 10%);
+    }
+    #cabin-options, #order_dropdown, input, button {
+        display:flex;
+        margin:auto;
+    }
+    label, option {
+        display:flex;
+        margin:auto;
+        color: black;
+    
+        border: 1px #DDD solid; padding: 5px; cursor: pointer;
+    }
+
+
+</style>
+<body>
+    
+    <div id="container" class="cont1">
+        <!-- formen för att posta en ny order -->
+        <form action={% url 'new_order' %} method="POST">
+        {% csrf_token %}
+        {% if cabins %}
+        <h3>Choose cabin and service</h3>
+        <select name="cabins" id="cabin-options">
+            <!-- looppar igenom cabins som fåtts från /cabins/owned och lägger dom som dropdown options -->
+            {% for cabin in cabins %}
+            <option value="{{cabin.address}}">{{ cabin.address|capfirst }}</option>
+            {% endfor %}
+        </select><br>
+        <select name="service" id="cabin-options">
+            {% for service in type_of_service %}
+            <option value="{{service}}">{{ service|capfirst }}</option>
+            {% endfor %}
+        </select>
+
+        <h3>Select date:</h3>
+        <input type="date" name="order_date" class="form-control dateinput form-control" 
+        placeholder="Select a date"><br>
+        <button type="submit">Order</button>
+        </form>
+        {% endif %}
+    </div>
+
+    <div id="container" class="cont2">
+        <h3>Orders</h3>
+        <form action={% url 'delete_order' %} method="POST">
+        {% csrf_token %}
+        {% if order_data %}
+            <select name="order" id="order_dropdown">
+            {% for order in order_data %}
+                <option value="{{ order.id }}">{{ order.date_of_service|date:"SHORT_DATE_FORMAT" }} {{ order.service }} {{ order.cabin }}</option>
+            {% endfor %}
+        </select>
+        
+        <br><button type="submit" name="delete">Delete</button>
+        </form>
+        {% endif %}
+
+        <form action={% url 'update_order' %} method="POST" id="change_form">
+            {% csrf_token %}
+            {% if cabins %}
+            <h3>Change an order:</h3>
+            <select name="cabins" id="cabin-options">
+                {% for cabin in cabins %}
+                <option value="{{cabin.address}}">{{ cabin.address|capfirst }}</option>
+                {% endfor %}
+            </select><br>
+            <select name="service" id="cabin-options">
+                {% for service in type_of_service %}
+                <option value="{{service}}">{{ service|capfirst }}</option>
+                {% endfor %}
+            </select>
+            <h3>Select date:</h3>
+            <input type="date" name="order_date" class="form-control dateinput form-control" 
+            placeholder="Select a date"><br>
+        <button id="change_button" type="submit" name="change">Change</button>
+        </form>
+        {% endif %}
+</div>
+<script>
+    //hämtar id:n på formen för att ändra på en order
+    $("#change_form").submit( function() {
+        //lägger till ett element i formen med valuen för den ordern man valt i dropdownen
+      $("<input />").attr("type", "hidden")
+          .attr("name", "selected_cabin")
+          .attr("value", $("#order_dropdown").val())
+          .appendTo("#change_form");
+        return true;
+    });
+
+</script>
+</body>
+</html>
